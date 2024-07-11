@@ -1,8 +1,11 @@
 package com.example.sqlitewithandroidtutorials;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -35,5 +38,43 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
+    }
+
+    void addBook(String title, String author, int pages) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_TITLE, title);
+        cv.put(COLUMN_AUTHOR, author);
+        cv.put(COLUMN_PAGES, pages);
+        long res = db.insert(TABLE_NAME, null, cv);
+        if (res == -1) {
+            Toast.makeText(context, "Failed to insert data", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Successfully inserted data", Toast.LENGTH_SHORT).show();
+        }
+//        db.execSQL("INSERT INTO " + TABLE_NAME + " (" + COLUMN_TITLE + ", " + COLUMN_AUTHOR + ", " + COLUMN_PAGES + ") VALUES ('" + title + "', '" + author + "', '" + pages + "')");
+    }
+
+    void updateBook(int id, String title, String author, int pages) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE " + TABLE_NAME + " SET " + COLUMN_TITLE + " = '" + title + "', " + COLUMN_AUTHOR + " = '" + author + "', " + COLUMN_PAGES + " = '" + pages + "' WHERE " + COLUMN_ID + " = '" + id + "'");
+    }
+
+    void deleteBook(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = '" + id + "'");
+    }
+
+
+    Cursor getAllData() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME;
+        Cursor cursor = null;
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+        } else {
+            Toast.makeText(context, "Database is null", Toast.LENGTH_SHORT).show();
+        }
+        return cursor;
     }
 }
