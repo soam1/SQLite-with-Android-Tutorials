@@ -55,16 +55,32 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 //        db.execSQL("INSERT INTO " + TABLE_NAME + " (" + COLUMN_TITLE + ", " + COLUMN_AUTHOR + ", " + COLUMN_PAGES + ") VALUES ('" + title + "', '" + author + "', '" + pages + "')");
     }
 
-    void updateBook(int id, String title, String author, int pages) {
+    void updateBook(int rowId, String title, String author, int pages) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE " + TABLE_NAME + " SET " + COLUMN_TITLE + " = '" + title + "', " + COLUMN_AUTHOR + " = '" + author + "', " + COLUMN_PAGES + " = '" + pages + "' WHERE " + COLUMN_ID + " = '" + id + "'");
+//        db.execSQL("UPDATE " + TABLE_NAME + " SET " + COLUMN_TITLE + " = '" + title + "', " + COLUMN_AUTHOR + " = '" + author + "', " + COLUMN_PAGES + " = '" + pages + "' WHERE " + COLUMN_ID + " = '" + id + "'");
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_TITLE, title);
+        cv.put(COLUMN_AUTHOR, author);
+        cv.put(COLUMN_PAGES, pages);
+
+        long res = db.update(TABLE_NAME, cv, COLUMN_ID + " = ?", new String[]{String.valueOf(rowId)});
+        if (res == -1) {
+            Toast.makeText(context, "Failed to update data", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Successfully updated data", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    void deleteBook(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = '" + id + "'");
-    }
 
+    void deleteOneRow(String row_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
+        if (result == -1) {
+            Toast.makeText(context, "Failed to Delete.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Successfully Deleted.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     Cursor getAllData() {
         SQLiteDatabase db = this.getReadableDatabase();

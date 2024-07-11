@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,12 +45,21 @@ public class MainActivity extends AppCompatActivity {
 
         storeDataInArrays();
 
-        bookItemsAdapter = new BookItemsAdapter(this, book_id, book_title, book_author, book_pages);
+        bookItemsAdapter = new BookItemsAdapter(MainActivity.this, this, book_id, book_title, book_author, book_pages);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setAdapter(bookItemsAdapter);
         recyclerView.setHasFixedSize(true);
         bookItemsAdapter.notifyDataSetChanged();
 
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            recreate();
+        }
 
     }
 
